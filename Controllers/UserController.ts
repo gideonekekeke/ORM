@@ -139,8 +139,6 @@ export const UpdateUser = async (req: Request, res: Response) => {
 export const DeleteUser = async (req: Request, res: Response) => {
 	try {
 		const userId = req.params.id;
-		// const { email } = req.body;
-
 		const options = {
 			where: {
 				id: userId,
@@ -153,6 +151,43 @@ export const DeleteUser = async (req: Request, res: Response) => {
 			message: "success",
 			data: user,
 		});
+	} catch (err: any) {
+		new ErrorDefiner({
+			message: "cannot create Profile",
+			status: HTTPCode.BAD_REQUEST,
+			name: "profile Creating",
+			isSuccess: false,
+		});
+	}
+};
+
+export const DeleteUserProfile = async (req: Request, res: Response) => {
+	try {
+		const userId = req.params.id;
+		const profileId = req.params.profileId;
+
+		const options = {
+			where: {
+				id: userId,
+			},
+			relations: ["profile"],
+		};
+
+		const user = await UserEntites.findOne(options);
+
+		if (user?.profile) {
+			user.profile = null;
+			await user.save();
+			await profileEntity.delete(profileId);
+			return res.send({
+				message: "success",
+				data: user,
+			});
+		} else {
+			return res.send({
+				message: "user with profile doesn't exists",
+			});
+		}
 	} catch (err: any) {
 		new ErrorDefiner({
 			message: "cannot create Profile",

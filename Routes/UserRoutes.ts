@@ -3,6 +3,7 @@ import {
 	createUser,
 	createUserProfile,
 	DeleteUser,
+	DeleteUserProfile,
 	GetAll,
 	getOneUser,
 	UpdateUser,
@@ -15,5 +16,6 @@ router.post("/profile/:id", createUserProfile);
 router.get("/:id", getOneUser);
 router.patch("/update/:id", UpdateUser);
 router.delete("/del/:id", DeleteUser);
+router.delete("/del/profile/:id/:profileId", DeleteUserProfile);
 
 export default router;

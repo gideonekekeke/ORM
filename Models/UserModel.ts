@@ -5,9 +5,11 @@ import {
 	BaseEntity,
 	OneToOne,
 	JoinColumn,
+	OneToMany,
 } from "typeorm";
 import "reflect-metadata";
 import { profileEntity } from "./userProfile";
+import { BookEntity } from "./BookShop";
 
 @Entity("UserEntites")
 export class UserEntites extends BaseEntity {
@@ -23,4 +25,7 @@ export class UserEntites extends BaseEntity {
 	@OneToOne(() => profileEntity, (profile) => profile.user)
 	@JoinColumn()
 	profile: profileEntity;
+
+	@OneToMany(() => BookEntity, (user) => user.author)
+	books: BookEntity;
 }
