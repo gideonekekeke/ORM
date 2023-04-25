@@ -26,6 +26,9 @@ export class UserEntites extends BaseEntity {
 	@JoinColumn()
 	profile: profileEntity;
 
-	@OneToMany(() => BookEntity, (user) => user.author)
-	books: BookEntity;
+	@OneToMany(() => BookEntity, (user) => user.author, {
+		eager: true,
+		nullable: true,
+	})
+	books: BookEntity[];
 }

@@ -5,7 +5,7 @@ import { ErrorDefiner } from "../utils/Handlers/ErrorDefiner";
 import { errorHandler } from "../utils/Handlers/ErrorHandler";
 import uuid from "uuid";
 import { profileEntity } from "../Models/userProfile";
-import { getRepository } from "typeorm";
+import { BookEntity } from "../Models/BookShop";
 export const GetAll = async (req: Request, res: Response) => {
 	try {
 		const users = await UserEntites.find();
@@ -135,31 +135,31 @@ export const UpdateUser = async (req: Request, res: Response) => {
 		});
 	}
 };
-
-export const DeleteUser = async (req: Request, res: Response) => {
-	try {
-		const userId = req.params.id;
-		const options = {
-			where: {
-				id: userId,
-			},
-		};
-
-		const user = await UserEntites.delete(userId);
-
-		return res.send({
-			message: "success",
-			data: user,
-		});
-	} catch (err: any) {
-		new ErrorDefiner({
-			message: "cannot create Profile",
-			status: HTTPCode.BAD_REQUEST,
-			name: "profile Creating",
-			isSuccess: false,
-		});
-	}
-};
+//
+// export const DeleteUser = async (req: Request, res: Response) => {
+// try {
+// const userId = req.params.id;
+// const options = {
+// where: {
+// id: userId,
+// },``
+// };
+//
+// const user = await UserEntites.delete(userId);
+//
+// return res.send({
+// message: "success",
+// data: user,
+// });
+// } catch (err: any) {
+// new ErrorDefiner({
+// message: "cannot create Profile",
+// status: HTTPCode.BAD_REQUEST,
+// name: "profile Creating",
+// isSuccess: false,
+// });
+// }
+// };
 
 export const DeleteUserProfile = async (req: Request, res: Response) => {
 	try {
@@ -188,6 +188,47 @@ export const DeleteUserProfile = async (req: Request, res: Response) => {
 				message: "user with profile doesn't exists",
 			});
 		}
+	} catch (err: any) {
+		new ErrorDefiner({
+			message: "cannot create Profile",
+			status: HTTPCode.BAD_REQUEST,
+			name: "profile Creating",
+			isSuccess: false,
+		});
+	}
+};
+
+// creating a book and map it to a user
+
+export const CreateBook = async (req: Request, res: Response) => {
+	try {
+		const userId = req.params.id;
+		const { title, description } = req.body;
+
+		const options = {
+			where: {
+				id: userId,
+			},
+			relations: ["books"],
+		};
+
+		const user = await UserEntites.findOne(options);
+		console.log(user);
+
+		const creating = BookEntity.create({
+			title,
+			description,
+			author: user,
+		});
+
+		await creating.save();
+		user.books.push(creating);
+		await user.save();
+
+		res.status(HTTPCode.OK).json({
+			message: "Book uploaded successfull",
+			data: creating,
+		});
 	} catch (err: any) {
 		new ErrorDefiner({
 			message: "cannot create Profile",
