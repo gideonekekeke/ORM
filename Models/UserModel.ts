@@ -6,6 +6,7 @@ import {
 	OneToOne,
 	JoinColumn,
 	OneToMany,
+	JoinTable,
 } from "typeorm";
 import "reflect-metadata";
 import { profileEntity } from "./userProfile";
